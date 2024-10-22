@@ -1,32 +1,6 @@
 import numpy as np
 import cv2
-import math
-
-
-def find_area_nikita(figure):
-    x_mid = sum([it[0] for it in figure]) // len(figure)
-    y_mid = sum([it[1] for it in figure]) // len(figure)
-    area = 0
-    for k in range(-1, len(figure) - 1):
-        point1 = figure[k]
-        point2 = figure[k + 1]
-        a = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
-        b = math.sqrt((point2[0] - x_mid) ** 2 + (point2[1] - y_mid) ** 2)
-        c = math.sqrt((point1[0] - x_mid) ** 2 + (point1[1] - y_mid) ** 2)
-        p = (a + b + c) / 2
-        area += math.sqrt(p * (p - a) * (p - b) * (p - c))
-    return round(area, 5)
-
-
-def find_area_roman(figure):
-    area = 0
-    for i in range(len(figure)):
-        area += figure[i - 1][0] * figure[i][1] - figure[i - 1][1] * figure[i][0]
-    return 0.5 * abs(area)
-
-
-def neighbourhood(point1, point2):
-    return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+import math_functions as mf
 
 
 def main(picture, num_of_areas, max_points_count_in_one_area):
@@ -113,10 +87,10 @@ def main(picture, num_of_areas, max_points_count_in_one_area):
                 for i in range(len(area_filter[t]) - 1):
                     exclusion = True
                     for j in range(i + 1, len(area_filter[t])):
-                        if neighbourhood(area_filter[t][i], area_filter[t][j]) <= neighbourhood_distance:
+                        if mf.neighbourhood(area_filter[t][i], area_filter[t][j]) <= neighbourhood_distance:
                             bad_indexes[i] = True
                             bad_indexes[j] = True
-                        if neighbourhood(area_filter[t][i], area_filter[t][j]) <= point_alienation_parameter:
+                        if mf.neighbourhood(area_filter[t][i], area_filter[t][j]) <= point_alienation_parameter:
                             exclusion = False
                     if exclusion:
                         bad_indexes[i] = True
@@ -133,7 +107,7 @@ def main(picture, num_of_areas, max_points_count_in_one_area):
                     if i != j and current_areas[i] and current_areas[j]:
                         for point1 in locality_filter[i]:
                             for point2 in locality_filter[j]:
-                                if neighbourhood(point1, point2) <= area_alienation_parameter:
+                                if mf.neighbourhood(point1, point2) <= area_alienation_parameter:
                                     can_delete = False
                                     break
                             if not can_delete:
@@ -199,7 +173,7 @@ def main(picture, num_of_areas, max_points_count_in_one_area):
         for t in range(len(distance_filter)):
             color = color_set[t]
             print(f'Area {t + 1}: {len(distance_filter[t])} points; s{t + 1}_kiselev = '
-                  f'{find_area_nikita(distance_filter[t])}; s{t + 1}_djachenko = {find_area_roman(distance_filter[t])}')
+                  f'{mf.find_area_nikita(distance_filter[t])}; s{t + 1}_djachenko = {mf.find_area_roman(distance_filter[t])}')
             for item in distance_filter[t]:
                 img2 = cv2.circle(img2, (item[0], item[1]), radius=3, color=color, thickness=-1)
             # cv2.putText(img2, str(item[0]) + " " + str(item[1]), (item[0], item[1]), font, 0.3, random_color)
