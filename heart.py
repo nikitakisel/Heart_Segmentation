@@ -1,10 +1,9 @@
 import numpy as np
 import cv2
 import math
-import random
 
 
-def find_area(figure):
+def find_area_nikita(figure):
     x_mid = sum([it[0] for it in figure]) // len(figure)
     y_mid = sum([it[1] for it in figure]) // len(figure)
     area = 0
@@ -19,13 +18,20 @@ def find_area(figure):
     return round(area, 5)
 
 
+def find_area_roman(figure):
+    area = 0
+    for i in range(len(figure)):
+        area += figure[i - 1][0] * figure[i][1] - figure[i - 1][1] * figure[i][0]
+    return 0.5 * abs(area)
+
+
 def neighbourhood(point1, point2):
     return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
 
-def main():
+def main(num_of_areas, max_points_count_in_one_area):
     # Main settings
-    picture = 'img/heart/fourcameracut-8.jpg'
+    picture = 'img/heart/fourcameracut-5.jpg'
     # picture = 'img/vessels/sosudecut-2.jpg'
 
     # Filter settings
@@ -40,8 +46,8 @@ def main():
     threshold_variants = [24, 30, 36, 42, 48, 54, 60, 66, 72, 78]
 
     # Areas parameters
-    num_of_areas = 4
-    max_points_count_in_one_area = 25
+    # num_of_areas = 3
+    # max_points_count_in_one_area = 15
 
     # Result parameters
     result_points_count = 0
@@ -179,25 +185,32 @@ def main():
         print(f'Optimal gauss radius is {result_gauss_radius} px')
         print(f'Optimal threshold parameter is {result_threshold_parameter} pt')
         print(f'Points coordinates: {distance_filter}')
+
         img2 = cv2.imread(picture, cv2.IMREAD_COLOR)
+        color_set = [
+            (242, 238, 0),
+            (9, 219, 79),
+            (247, 2, 162),
+            (135, 107, 4),
+            (235, 32, 21),
+            (61, 70, 196),
+        ]
+
         for t in range(len(distance_filter)):
-            random_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-            print(f'Area {t + 1}: {len(distance_filter[t])} points')
+            color = color_set[t]
+            print(f'Area {t + 1}: {len(distance_filter[t])} points; s{t + 1}_kiselev = '
+                  f'{find_area_nikita(distance_filter[t])}; s{t + 1}_djachenko = {find_area_roman(distance_filter[t])}')
             for item in distance_filter[t]:
-                img2 = cv2.circle(img2, (item[0], item[1]), radius=3, color=random_color, thickness=-1)
+                img2 = cv2.circle(img2, (item[0], item[1]), radius=3, color=color, thickness=-1)
             # cv2.putText(img2, str(item[0]) + " " + str(item[1]), (item[0], item[1]), font, 0.3, random_color)
             for i in range(-1, len(distance_filter[t]) - 1):
                 cv2.line(img2, (distance_filter[t][i][0], distance_filter[t][i][1]),
-                         (distance_filter[t][i + 1][0], distance_filter[t][i + 1][1]), random_color, thickness=1)
+                         (distance_filter[t][i + 1][0], distance_filter[t][i + 1][1]), color, thickness=1)
 
         print(f'Total: {sum([len(elem) for elem in distance_filter])} points')
-        cv2.imshow('image2', img2)
+        cv2.imshow('Ultrasound Image Exploring', img2)
 
         # print(results)
         # Exiting the window if 'q' is pressed on the keyboard.
         if cv2.waitKey(0) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
-
-
-if __name__ == "__main__":
-    main()
