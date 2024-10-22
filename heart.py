@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import alerts
 import math_functions as mf
 
 
@@ -191,3 +192,6 @@ def main(picture, num_of_areas, max_points_count_in_one_area):
         # Exiting the window if 'q' is pressed on the keyboard.
         if cv2.waitKey(0) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
+
+    else:
+        alerts.show_alert("Упс! Похоже, по вашему\nзапросу области не найдены :(")
