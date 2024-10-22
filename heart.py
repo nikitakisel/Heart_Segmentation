@@ -29,9 +29,9 @@ def neighbourhood(point1, point2):
     return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
 
-def main(num_of_areas, max_points_count_in_one_area):
+def main(picture, num_of_areas, max_points_count_in_one_area):
     # Main settings
-    picture = 'img/heart/fourcameracut-5.jpg'
+    # picture = 'img/heart/fourcameracut-5.jpg'
     # picture = 'img/vessels/sosudecut-2.jpg'
 
     # Filter settings
@@ -208,7 +208,10 @@ def main(num_of_areas, max_points_count_in_one_area):
                          (distance_filter[t][i + 1][0], distance_filter[t][i + 1][1]), color, thickness=1)
 
         print(f'Total: {sum([len(elem) for elem in distance_filter])} points')
+
+        cv2.namedWindow('Ultrasound Image Exploring', cv2.WINDOW_NORMAL)
         cv2.imshow('Ultrasound Image Exploring', img2)
+        cv2.resizeWindow('Ultrasound Image Exploring', 1130, 780)
 
         # print(results)
         # Exiting the window if 'q' is pressed on the keyboard.

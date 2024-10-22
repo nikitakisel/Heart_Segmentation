@@ -4,7 +4,7 @@ import heart
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow, QGridLayout, QWidget, QLineEdit, QPushButton, QLabel, \
-    QApplication, QFileDialog
+    QApplication, QFileDialog, QMessageBox
 
 
 class MainWindow(QMainWindow):
@@ -48,9 +48,35 @@ class MainWindow(QMainWindow):
         self.file_name, _ = QFileDialog.getOpenFileName(self, 'Open file', 'img/', "Image files (*.png *.jpg)")
         img = QPixmap(self.file_name)
         self.img_label.setPixmap(img)
+        print(self.file_name)
 
     def explore_image(self):
-        heart.main(int(self.num_of_areas_textbox.text()), int(self.max_points_count_in_one_area_textbox.text()))
+        if not self.file_name:
+            show_alert("Вы не выбрали\nизображение!")
+        elif self.num_of_areas_textbox.text() == '' or self.max_points_count_in_one_area_textbox.text() == '':
+            show_alert('Заполните\nвсе поля!')
+        elif not self.num_of_areas_textbox.text().isdigit():
+            show_critical("В поле 'Кол-во областей'\nвы ввели не число!")
+        elif not self.max_points_count_in_one_area_textbox.text().isdigit():
+            show_critical("В поле 'MAX точек в области'\nвы ввели не число!")
+        else:
+            heart.main(self.file_name, int(self.num_of_areas_textbox.text()), int(self.max_points_count_in_one_area_textbox.text()))
+
+
+def show_alert(text):
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setText(text)
+    msg.setStandardButtons(QMessageBox.Ok)
+    retval = msg.exec_()
+
+
+def show_critical(text):
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Critical)
+    msg.setText(text)
+    msg.setStandardButtons(QMessageBox.Ok)
+    retval = msg.exec_()
 
 
 def main():
