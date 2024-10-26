@@ -163,12 +163,12 @@ def main(picture, num_of_areas, max_points_count_in_one_area):
 
         img2 = cv2.imread(picture, cv2.IMREAD_COLOR)
         color_set = [
-            (242, 238, 0),
-            (9, 219, 79),
-            (247, 2, 162),
-            (135, 107, 4),
-            (235, 32, 21),
-            (61, 70, 196),
+            (0, 238, 242),
+            (79, 219, 9),
+            (162, 2, 247),
+            (4, 107, 135),
+            (21, 32, 235),
+            (196, 70, 61),
         ]
 
         for t in range(len(distance_filter)):
